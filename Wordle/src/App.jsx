@@ -1,38 +1,75 @@
 import { useState } from 'react'
+import './App.css'
 
 const MAX_GUESSES = 5
-const MAX_WORD_LENGTH = 5
+
 
 export default function App() {
   const [word, setWord] = useState("")
   const [guesses, setGuesses] = useState([])
   const [message, setMessage] = useState("")
-  const [target, setTarget] = useState("APPLE")
+  const [target, setTarget] = useState("")
+  const [gameStarted, setGameStarted] = useState(false)
+  const [isWin, setIsWin] = useState(0)
+  const [buttonDisabled, setButtonDisabled] = useState(false)
+  
 
-  function handleInputChange(e) {
-    setWord(e.target.value)
+  let start;
+  let startButton;
+
+  if(!gameStarted){
+    start = <label>Enter Word to be Guessed: </label>
+    startButton = <button onClick={initializeGame}>Start Game</button>
+  }
+  else{
+    start = <label>Guess Word: </label>;
+    startButton = <button onClick={handleSubmit} disabled={buttonDisabled}>Submit</button>;
   }
 
+  function handleInputChange(e) {
+    setWord(e.target.value);
+  }
+
+  function initializeGame() {
+    setTarget(word);
+    setWord("");
+    setMessage("");
+    setGameStarted(true);
+  }
   function handleSubmit() {
     if (guesses.includes(word)) {
-      setMessage("You already guessed that word!")
-      return
+      setMessage("You already guessed that word!");
+      return;
     }
     if(target.toUpperCase().includes(word.toUpperCase()) && word.toUpperCase() === target.toUpperCase()) {
-      setMessage("Congratulations! You guessed the word!")
-      return
+      setMessage("Congratulations! You guessed the word!");
+      setIsWin(1);
+      setGuesses([...guesses, word]);
+      setButtonDisabled(true);
+      return;
     }
-    if (word.length != MAX_WORD_LENGTH) {
-      setMessage(`Word must be ${MAX_WORD_LENGTH} letters long.`)
-        return
+    if (word.length > target.length) {
+      setMessage(`The word you entered is longer than ${target.length} characters!`);
+        return;
     }
-    if(guesses.length >= MAX_GUESSES) {
-      setMessage("Game over! No more guesses allowed.")
-      return
+    if (word.length < target.length) {
+      setMessage(`The word you entered is shorter than ${target.length} characters!`);
+        return;
     }
-    setGuesses([...guesses, word])
-    setWord("")
-    setMessage("")
+
+    
+    setGuesses([...guesses, word]);
+    setWord("");
+    setMessage("");
+    console.log(guesses.length);
+
+    if(guesses.length >= MAX_GUESSES - 1) {
+      setMessage("Game over! No more guesses allowed.");
+      setIsWin(2);
+      setButtonDisabled(true);
+      return;
+    }
+    
   }
 
   function getBackgroundColor(letter, index) {
@@ -56,7 +93,7 @@ export default function App() {
     <>
       <div>
         <h1>Wordle</h1>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="guesses-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       
       {guesses.map((word, rowIndex) => (
         // Each word forms a row
@@ -94,12 +131,11 @@ export default function App() {
     </div>
       </div>
       <div>
-        
-        <label>Enter your guess: </label>
+        {start}
         <input type="text" onChange={handleInputChange} value={word} />
-        <button onClick={handleSubmit}>Submit</button>
+        {startButton}
         <hr></hr>
-        <label style={{ color: 'red' }}>{message}</label>
+        <label style={{ color: isWin == 1 ? '#538d4e' : '#e06666' }}>{message}</label>
       </div>
     </>
   )

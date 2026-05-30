@@ -118,10 +118,10 @@ export default function App() {
 
   function displayGuesses(word, rowIndex) {
     return(
-    <div key={rowIndex} style={{ display: 'flex', gap: '8px' }}>
+        <div key={rowIndex} style={{ display: 'flex', gap: '8px' }}>
           
           {/* Split the word into an array of letters and map over them */}
-          {word.split('').map((letter, colIndex) => (colorGuesses(letter, colIndex, rowIndex)))}
+          {word.split('').map(colorGuesses)}
         </div>
     );
   }
@@ -131,7 +131,7 @@ export default function App() {
         <h1>Wordle</h1>
         <div className="guesses-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       
-          {guesses.map((word, rowIndex) => (displayGuesses(word, rowIndex)))}
+          {guesses.map(displayGuesses)}
       
         </div>
       </div>

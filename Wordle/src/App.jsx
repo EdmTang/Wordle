@@ -14,14 +14,10 @@ export default function App() {
   const [buttonDisabled, setButtonDisabled] = useState(false)
   
 
-  let start;
-  let startButton;
+  let start = <label>Enter Word to be Guessed: </label>;
+  let startButton = <button onClick={initializeGame}>Start Game</button>
 
-  if(!gameStarted){
-    start = <label>Enter Word to be Guessed: </label>
-    startButton = <button onClick={initializeGame}>Start Game</button>
-  }
-  else{
+  if(gameStarted){
     start = <label>Guess Word: </label>;
     startButton = <button onClick={handleSubmit} disabled={buttonDisabled}>Submit</button>;
   }
@@ -58,13 +54,12 @@ export default function App() {
     }
 
     
-    setGuesses([...guesses, word]);
+    setGuesses(g => [...g, word]);
     setWord("");
     setMessage("");
-    console.log(guesses.length);
 
     if(guesses.length >= MAX_GUESSES - 1) {
-      setMessage("Game over! No more guesses allowed.");
+      setMessage(`Game over! The correct word was: ${target}`);
       setIsWin(2);
       setButtonDisabled(true);
       return;
@@ -85,10 +80,6 @@ export default function App() {
     
     return '#e06666'; // Red: Letter not in the word at all
   };
-  
-  function endGame() {
-    setMessage(`Game over! The correct word was: ${target}`);
-  }
 
   function colorGuesses(letter, colIndex, rowIndex) {
     const tileColor = getBackgroundColor(letter, colIndex);

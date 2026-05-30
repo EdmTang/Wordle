@@ -89,21 +89,11 @@ export default function App() {
   function endGame() {
     setMessage(`Game over! The correct word was: ${target}`);
   }
-  return (
-    <>
-      <div>
-        <h1>Wordle</h1>
-        <div className="guesses-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-      
-      {guesses.map((word, rowIndex) => (
-        // Each word forms a row
-        <div key={rowIndex} style={{ display: 'flex', gap: '8px' }}>
-          
-          {/* Split the word into an array of letters and map over them */}
-          {word.split('').map((letter, colIndex) => {
-            const tileColor = getBackgroundColor(letter, colIndex);
-            // Each letter forms a cell/column inside that row
-            return (
+
+  function colorGuesses(letter, colIndex, rowIndex) {
+    const tileColor = getBackgroundColor(letter, colIndex);
+    // Each letter forms a cell/column inside that row
+    return (
             <div
               key={`${rowIndex}-${colIndex}`}
               style={{
@@ -123,12 +113,27 @@ export default function App() {
             >
               {letter}
             </div>
-            );
-          })}
+    );
+  }
+
+  function displayGuesses(word, rowIndex) {
+    return(
+    <div key={rowIndex} style={{ display: 'flex', gap: '8px' }}>
+          
+          {/* Split the word into an array of letters and map over them */}
+          {word.split('').map((letter, colIndex) => (colorGuesses(letter, colIndex, rowIndex)))}
         </div>
-      ))}
+    );
+  }
+  return (
+    <>
+      <div>
+        <h1>Wordle</h1>
+        <div className="guesses-container" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
       
-    </div>
+          {guesses.map((word, rowIndex) => (displayGuesses(word, rowIndex)))}
+      
+        </div>
       </div>
       <div>
         {start}
